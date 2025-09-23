@@ -11,7 +11,12 @@ def main():
     
     beta = 0.2  # RATE OF TRANSMISSION (NUMBER OF PEOPLE INFECTED PER DAY FOR EACH INFECTED PERSON)
     gamma = 1/7    # RATE OF RECOVERY (INVERSE OF AVERAGE NUMBER OF DAYS FROM INFECTION ONSET TO RECOVERY)
-    n_days = np.linespace(0, 100, 100)  # NUMBER OF DAYS TO RUN THE SIMULATION FOR
+    n_days = np.linspace(0, 365, num=365)  # NUMBER OF DAYS TO RUN THE SIMULATION FOR
+    
+    yi = Si, Ii, Ri
+    sol = solve_ivp(equations, [min(n_days), max(n_days)], yi, args=(N, beta, gamma), t_eval=n_days)
+    S, I, R = sol.y
+
     
 
 def equations(n_days, y, N, beta, gamma):
