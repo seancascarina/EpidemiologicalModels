@@ -1,23 +1,41 @@
 
 import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
 from scipy.integrate import solve_ivp
 
-def main():
+def main(args):
 
-    N = 10000   # POPULATION SIZE
-    Ii = 1       # INITIAL NUMBER OF INFECTED PEOPLE
-    Ri = 0       # INITIAL NUMBER OF RECOVERED PEOPLE
-    Si = N - Ii - Ri   # INITIAL NUMBER OF SUSCEPTIBLE PEOPLE
+    # N = 10000   # POPULATION SIZE
+    # Ii = 1       # INITIAL NUMBER OF INFECTED PEOPLE
+    # Ri = 0       # INITIAL NUMBER OF RECOVERED PEOPLE
+    # Si = N - Ii - Ri   # INITIAL NUMBER OF SUSCEPTIBLE PEOPLE
     
-    beta = 0.2  # RATE OF TRANSMISSION (NUMBER OF PEOPLE INFECTED PER DAY FOR EACH INFECTED PERSON)
-    gamma = 1/7    # RATE OF RECOVERY (INVERSE OF AVERAGE NUMBER OF DAYS FROM INFECTION ONSET TO RECOVERY)
-    n_days = np.linspace(0, 365, num=365)  # NUMBER OF DAYS TO RUN THE SIMULATION FOR
+    # beta = 0.2  # RATE OF TRANSMISSION (NUMBER OF PEOPLE INFECTED PER DAY FOR EACH INFECTED PERSON)
+    # gamma = 1/10    # RATE OF RECOVERY (INVERSE OF AVERAGE NUMBER OF DAYS FROM INFECTION ONSET TO RECOVERY)
+    # n_days = np.linspace(0, 365, num=365)  # NUMBER OF DAYS TO RUN THE SIMULATION FOR
+    
+    N = args.population_size
+    Ii = args.infected
+    Ri = args.recovered
+    Si = N - Ii - Ri
+    
+    beta = args.beta
+    gamma = 1 / args.recovery_time
+    n_days = args.days
+    days = np.linspace(0, n_days, n_days) 
     
     yi = Si, Ii, Ri
-    sol = solve_ivp(equations, [min(n_days), max(n_days)], yi, args=(N, beta, gamma), t_eval=n_days)
+    sol = solve_ivp(equations, [min(days), max(days)], yi, args=(N, beta, gamma), t_eval=days)
     labels = ['Susceptible', 'Infected', 'Recovered']
     df = make_plotting_df(sol.y, labels)
+    lineplot(df)
     
+    
+def lineplot(df):
+    
+    sns.lineplot(x='Day', y='Number of People', data=df, hue='Category')
+    plt.show()
 
 
 def make_plotting_df(vals_list, labels):
@@ -44,5 +62,23 @@ def equations(n_days, y, N, beta, gamma):
     return dSdt, dIdt, dRdt
     
 
+def get_args(arguments):
+    
+    parser = argparse.ArgumentParser(description='Run SIR model simulation.', prog='SIR')
+    
+    parser.add_argument('-p', '--population_size', type=int, default=1000, help="""Population size in number of individuals ("N" in many epidemiological models).""")
+    parser.add_argument('-i', '--infected', type=int, default=1, help="""Number of infected individuals at the start of the simulation.""")
+    parser.add_argument('-r', '--recovered', type=int, default=0, help="""Number of recovered individuals at the start of the simulation.""")
+    parser.add_argument('-b', '--beta', type=float, default=0.25, help="""Beta transmission rate.""")
+    parser.add_argument('-v', '--recovery_time', type=float, default=10, help="""Recovery time in days. This is used to calculate gamma (inverse of recovery time).""")
+    parser.add_argument('-d', '--days', type=int, default=365, help="""Number of days to run the simulation for.""")
+
+    args = parser.parse_args(arguments)
+    
+    return args
+    
+    
 if __name__ == '__main__':
-    main()
+    import sys, argparse
+    args = get_args(sys.argv[1:])
+    main(args)
