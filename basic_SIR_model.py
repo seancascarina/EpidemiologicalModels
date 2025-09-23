@@ -1,7 +1,19 @@
 
+import numpy as np
 
 def main():
 
+    N = 10000   # POPULATION SIZE
+    Ii = 1       # INITIAL NUMBER OF INFECTED PEOPLE
+    Ri = 0       # INITIAL NUMBER OF RECOVERED PEOPLE
+    Si = N - Ii - Ri   # INITIAL NUMBER OF SUSCEPTIBLE PEOPLE
+    
+    beta = 0.2  # RATE OF TRANSMISSION (NUMBER OF PEOPLE INFECTED PER DAY FOR EACH INFECTED PERSON)
+    gamma = 1/7    # RATE OF RECOVERY (INVERSE OF AVERAGE NUMBER OF DAYS FROM INFECTION ONSET TO RECOVERY)
+    n_days = np.linespace(0, 100, 100)  # NUMBER OF DAYS TO RUN THE SIMULATION FOR
+    
+    
+    
 
 if __name__ == '__main__':
     main()
