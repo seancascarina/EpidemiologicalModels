@@ -1,7 +1,21 @@
 
+import numpy as np
 
 def main():
 
+    
+    # CHANGE THESE TO VARY DIFFERENT PARAMETERS====
+    variable = 'RecoveryTime'
+    flag = '-v'
+    values = np.linspace(3, 12, num=19)
+    #==============================================
+    
+    output = open(f'RUN_SIRmodel_{variable}-varied.bat', 'w')
+    for value in values:
+        output.write(f'python basic_SIR_model.py {flag} {value}\n')
+        
+    output.close()
+        
 
 if __name__ == '__main__':
     main()
