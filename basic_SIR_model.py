@@ -15,8 +15,23 @@ def main():
     
     yi = Si, Ii, Ri
     sol = solve_ivp(equations, [min(n_days), max(n_days)], yi, args=(N, beta, gamma), t_eval=n_days)
-    S, I, R = sol.y
+    labels = ['Susceptible', 'Infected', 'Recovered']
+    df = make_plotting_df(sol.y, labels)
+    
 
+
+def make_plotting_df(vals_list, labels):
+    
+    df = {'Number of People':[],
+        'Day':[],
+        'Category':[]}
+    for i, vals in enumerate(vals_list):
+        label = labels[i]
+        df['Number of People'] += list(vals)
+        df['Day'] += [x for x in range(len(vals))]
+        df['Category'] += [label]*len(vals)
+        
+    return df
     
 
 def equations(n_days, y, N, beta, gamma):
