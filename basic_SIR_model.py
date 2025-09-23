@@ -1,5 +1,6 @@
 
 import numpy as np
+from scipy.integrate import solve_ivp
 
 def main():
 
@@ -12,7 +13,15 @@ def main():
     gamma = 1/7    # RATE OF RECOVERY (INVERSE OF AVERAGE NUMBER OF DAYS FROM INFECTION ONSET TO RECOVERY)
     n_days = np.linespace(0, 100, 100)  # NUMBER OF DAYS TO RUN THE SIMULATION FOR
     
+
+def equations(n_days, y, N, beta, gamma):
     
+    S, I, R = y
+    dSdt = -(beta * S * I) / N
+    dIdt = (beta * S * I) / N - (gamma * I)
+    dRdt = gamma * I
+    
+    return dSdt, dIdt, dRdt
     
 
 if __name__ == '__main__':
