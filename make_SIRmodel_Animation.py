@@ -14,15 +14,32 @@ def main():
     for file in files:
         df[file] = df.get(file, {})
         df, params = get_data(file, df, params)
-        
+    calc_interpolations(df)
     N = int(params[0])
     days = int(params[-1])
 
     # INITIALIZE THE FIGURE
     fig = plt.figure()
     ax = plt.axes(xlim=(0, days), ylim=(0, N))
-    line = ax.plot([], [], lw=2)
-
+    line, = ax.plot([], [], lw=2)
+    
+    anim = animation.FuncAnimation(fig, animate, init_func=init, fargs=(df),
+                               frames=days, interval=20, blit=True)
+    
+def calc_interpolations(df):
+    
+    files = list(df.keys())
+    interps_df = {}
+    for category in ['Susceptible', 'Infected', 'Recovered']:
+        interps_df[category] = []
+        for i, file in enumerate(files[:-1]):
+            next_file = files[i+1]
+            interp = [ np.linspace(df[file][category][j], df[next_file][category][j], num=200) for j in range(len(df[file][category])) ]
+            interps_df[category] += interp
+            
+    print(interps_df, len(interps_df['Susceptible']))
+    
+    return interps_df
 
 
 def init():
@@ -30,7 +47,7 @@ def init():
     """
     
     line.set_data([], [])
-    return line
+    return line,
     
 
 def get_data(file, df, params):
