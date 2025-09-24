@@ -25,11 +25,22 @@ def main(args):
     n_days = args.days
     days = np.linspace(0, n_days, n_days) 
     
+    output = open(args.output_file, 'w')
+    output.write(f'PARAMETERS: population_size={N} infected={Ii} recovered={Ri} beta={beta} gamma={gamma} days={n_days}\n')
+    output.write('\t'.join(['Day', 'Category', 'Value (Number of People)']) + '\n')
+    
     yi = Si, Ii, Ri
     sol = solve_ivp(equations, [min(days), max(days)], yi, args=(N, beta, gamma), t_eval=days)
     labels = ['Susceptible', 'Infected', 'Recovered']
     df = make_plotting_df(sol.y, labels)
     lineplot(df)
+    
+    for i, vals in enumerate(sol.y):
+        label = labels[i]
+        for j, val in enumerate(vals):
+            output.write('\t'.join([str(x) for x in (j, label, val)]) + '\n')
+            
+    output.close()
     
     
 def lineplot(df):
@@ -72,6 +83,7 @@ def get_args(arguments):
     parser.add_argument('-b', '--beta', type=float, default=0.25, help="""Beta transmission rate.""")
     parser.add_argument('-v', '--recovery_time', type=float, default=10, help="""Recovery time in days. This is used to calculate gamma (inverse of recovery time).""")
     parser.add_argument('-d', '--days', type=int, default=365, help="""Number of days to run the simulation for.""")
+    parser.add_argument('-o', '--output_file', type=str, default='SIRmodel_Results.tsv', help="""Output file to write SIR model results to.""")
 
     args = parser.parse_args(arguments)
     
