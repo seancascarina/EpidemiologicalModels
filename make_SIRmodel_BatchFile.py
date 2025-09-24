@@ -12,7 +12,7 @@ def main():
     
     output = open(f'RUN_SIRmodel_{variable}-varied.bat', 'w')
     for value in values:
-        output.write(f'python basic_SIR_model.py {flag} {value}\n')
+        output.write(f'python basic_SIR_model.py {flag} {value} -d 200 -o SIRmodel_{value}-{variable}_Results.tsv\n')
         
     output.close()
         
