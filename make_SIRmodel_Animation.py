@@ -18,6 +18,19 @@ def main():
     N = int(params[0])
     days = int(params[-1])
 
+    # INITIALIZE THE FIGURE
+    fig = plt.figure()
+    ax = plt.axes(xlim=(0, days), ylim=(0, N))
+    line = ax.plot([], [], lw=2)
+
+
+
+def init():
+    """Initialization function. Plots the background of each frame.
+    """
+    
+    line.set_data([], [])
+    return line
     
 
 def get_data(file, df, params):
