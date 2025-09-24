@@ -1,12 +1,49 @@
 
+import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib import animation
 
 def main():
     
     batch_file = 'RUN_SIRmodel_RecoveryTime-varied.bat'
+    values = np.linspace(3, 12, num=19)
     files = get_results_files(batch_file)
+    
+    df = {}
+    params = []
+    for file in files:
+        df[file] = df.get(file, {})
+        df, params = get_data(file, df, params)
+        
+    N = int(params[0])
+    days = int(params[-1])
 
+    
+
+def get_data(file, df, params):
+    
+    h = open(file)
+    params_header = h.readline().rstrip().split(' ')
+    if not params:
+        params = parse_params_header(params_header)
+        
+    header = h.readline()
+    for line in h:
+        day, category, value = line.rstrip().split('\t')
+        df[file][category] = df[file].get(category, [])
+        df[file][category].append(float(value))
+        
+    h.close()
+    
+    return df, params
+    
+        
+def parse_params_header(params_header):
+    
+    params = [x.split('=')[1] for x in params_header[1:]]
+    
+    return params
+    
 
 def get_results_files(batch_file):
     
