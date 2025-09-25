@@ -95,8 +95,8 @@ def get_results_files(batch_file):
     
     
 batch_file = 'RUN_SIRmodel_RecoveryTime-varied.bat'
-param_values = np.linspace(3, 12, num=19)
-initial_title = ''
+param_values = list(np.linspace(3, 12, num=19))
+initial_title = f"Recovery Time: {param_values.pop(0)} days"
 files = get_results_files(batch_file)
 num_interpolations = 20
 fps = 30
