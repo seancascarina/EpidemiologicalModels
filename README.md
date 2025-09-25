@@ -1,1 +1,16 @@
 # EpidemiologyModels
+A foundational model in epidemiology is the Susceptible-Infected-Recovered model, or **SIR model**, which simulates the spread of an infectious disease through a population. At any given point in the simulation, a population can be divided into the proportion susceptible to the infection (i.e., not immune), the proportion currently infected, and the proportion recovered (also sometimes called "removed" as it can include individuals who recover due to immunity or die from the infection...both groups are "removed" from the susceptible group).
+The SIR model calculates these proportions over time with the help of two additional parameters: 
+1) **β** ("beta", also known as the transmission rate), which represents the rate that each infected individual spreads the infection to other susceptible individuals. Mathematically, it is the average number of susceptible individuals an infected individual transmits the infection to each day. So if each individual infects another every 4 days, β=1/4 or 0.25.
+2) **γ** ("gamma", also known as the recovery rate), which essentially represents how quickly an infected individual transitions to the "recovered" category (either immunity or death). Mathematically, it is the inverse of the average recovery time. So if an individual recovers in 10 days on average, γ=1/10 or ~0.1.
+
+The β and γ parameters will vary based on the type of disease being modeled (as well as many other factors). Each type of infection will have a unique transmission rate and recovery rate. How these parameters affect the proportions of susceptible, infected, and removed individuals over time may not be immediately intuitive to most.
+
+To visualize the effects of these parameters, I developed a series of SIR model simulations that vary each of these parameters while holding the other constant. I then interpolated between the resulting data points and created an animated graph that shows how the curves adjust as the parameter is varied.
+
+## SIR Model, Recovery Time Varied
+The first simulation used a fixed β=0.25 and varied the recovery time between 3 to 12 days in increments of half a day. The graph pauses at each half-day increment in recovery time, and restarts after the 12-day recovery time.
+
+<img src="media/SIRmodel_RecoveryTimeVaried.gif" width="600" height="600"/>
+
+For the fixed β of 0.25, recovery time has a dramatic on the number of susceptible individuals that get infected for recovery times >4.0 days (likely not a coincidence that this is the inverse of β). With longer times required for recovery, the proportion of the population in the "infected" stage peaks earlier and more sharply compared to shorter recovery times, and a larger fraction of the population catches the infection before the disease stops spreading. This is due to an increase in the total number of individuals catch the infection from a single infected individual before they transition out of the "infected" stage to "recovered". For example, a recovery time of 4 days means that each infected individual will transmit the infection to 1 other individual on average before they recover, whereas a recovery time of 12 days means that each infected individual will transmit the infection to 3 other individuals on average before they recover.
