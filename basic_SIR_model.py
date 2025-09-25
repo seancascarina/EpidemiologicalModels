@@ -33,7 +33,7 @@ def main(args):
     sol = solve_ivp(equations, [min(days), max(days)], yi, args=(N, beta, gamma), t_eval=days)
     labels = ['Susceptible', 'Infected', 'Recovered']
     df = make_plotting_df(sol.y, labels)
-    lineplot(df)
+    # lineplot(df)
     
     for i, vals in enumerate(sol.y):
         label = labels[i]
