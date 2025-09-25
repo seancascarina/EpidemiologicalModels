@@ -2,43 +2,40 @@
 import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib import animation
+import seaborn as sns
+categories = ['Susceptible', 'Infected', 'Recovered']
+color_palette = sns.color_palette()[:len(categories)]
 
-def main():
-    
-    batch_file = 'RUN_SIRmodel_RecoveryTime-varied.bat'
-    values = np.linspace(3, 12, num=19)
-    files = get_results_files(batch_file)
-    
-    df = {}
-    params = []
-    for file in files:
-        df[file] = df.get(file, {})
-        df, params = get_data(file, df, params)
-    calc_interpolations(df)
-    N = int(params[0])
-    days = int(params[-1])
 
-    # INITIALIZE THE FIGURE
-    fig = plt.figure()
-    ax = plt.axes(xlim=(0, days), ylim=(0, N))
-    line, = ax.plot([], [], lw=2)
+def animate(i, df):
+
+    y = df[categories[0]][i]
+    x = [x for x in range(len(y))]
+    line1.set_data(x, y)
     
-    anim = animation.FuncAnimation(fig, animate, init_func=init, fargs=(df),
-                               frames=days, interval=20, blit=True)
+    y = df[categories[1]][i]
+    line2.set_data(x, y)
+    
+    y = df[categories[2]][i]
+    line3.set_data(x, y)
+    
+    return line1, line2, line3
+    
     
 def calc_interpolations(df):
     
     files = list(df.keys())
     interps_df = {}
-    for category in ['Susceptible', 'Infected', 'Recovered']:
-        interps_df[category] = []
+    for category in categories:
+        interps_matrix = []
         for i, file in enumerate(files[:-1]):
             next_file = files[i+1]
-            interp = [ np.linspace(df[file][category][j], df[next_file][category][j], num=200) for j in range(len(df[file][category])) ]
-            interps_df[category] += interp
-            
-    print(interps_df, len(interps_df['Susceptible']))
-    
+            interp = np.array( [ np.linspace(df[file][category][j], df[next_file][category][j], num=200) for j in range(len(df[file][category])) ] )
+            interps_matrix += list(interp.T)    # TRANSPOSE THE INTERPOLATION SO THAT EACH ROW REPRESENTS THE NEW Y-AXIS INTERPOLATION VALUES OF LENGTH 200 (REPRESENTING THE NUMBER OF DAYS)
+
+        interps_matrix = np.array(interps_matrix)
+        interps_df[category] = interps_matrix
+
     return interps_df
 
 
@@ -46,8 +43,11 @@ def init():
     """Initialization function. Plots the background of each frame.
     """
     
-    line.set_data([], [])
-    return line,
+    line1.set_data([], [])
+    line2.set_data([], [])
+    line3.set_data([], [])
+
+    return line1, line2, line3
     
 
 def get_data(file, df, params):
@@ -88,6 +88,30 @@ def get_results_files(batch_file):
     
     return files
     
+    
+batch_file = 'RUN_SIRmodel_RecoveryTime-varied.bat'
+values = np.linspace(3, 12, num=19)
+files = get_results_files(batch_file)
 
-if __name__ == '__main__':
-    main()
+df = {}
+params = []
+for file in files:
+    df[file] = df.get(file, {})
+    df, params = get_data(file, df, params)
+interps_df = calc_interpolations(df)
+
+N = int(params[0])
+days = int(params[-1])
+
+# INITIALIZE THE FIGURE
+fig = plt.figure()
+ax = plt.axes(xlim=(0, days), ylim=(0, N))
+line1, = ax.plot([], [], lw=2, color=color_palette[0], label=categories[0])
+line2, = ax.plot([], [], lw=2, color=color_palette[1], label=categories[1])
+line3, = ax.plot([], [], lw=2, color=color_palette[2], label=categories[2])
+lines = [line1, line2, line3]
+
+anim = animation.FuncAnimation(fig, animate, init_func=init, fargs=(interps_df,),
+                           frames=3500, interval=5, blit=True)
+
+plt.show()
