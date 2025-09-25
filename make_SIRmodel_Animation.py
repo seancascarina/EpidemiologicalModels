@@ -99,6 +99,7 @@ param_values = np.linspace(3, 12, num=19)
 initial_title = ''
 files = get_results_files(batch_file)
 num_interpolations = 20
+fps = 30
 
 df = {}
 params = []
@@ -114,7 +115,7 @@ days = int(params[-1])
 fig = plt.figure()
 ax = plt.axes(xlim=(0, days), ylim=(0, N))
 ax.set_xlabel('Day', fontname='Arial', fontsize=14)
-ax.set_ylabel('Number of People\n(per 1000)', fontname='Arial', fontsize=14)
+ax.set_ylabel('Number of Individuals\n(per 1000)', fontname='Arial', fontsize=14)
 for tick in ax.get_xticklabels():
     tick.set_fontsize(12)
     tick.set_fontname('Arial')
@@ -131,10 +132,19 @@ title = ax.text(0.5, 1.0, initial_title,
 
 fig.tight_layout()
 
+all_frames = []
+frame = 0
+for i in range(len(df) - 1):
+    new_frames = [x for x in range(frame, frame+num_interpolations)]
+    new_frames += [max(new_frames)]*fps
+    all_frames += new_frames
+    frame = max(new_frames) + 1
+    
+print(all_frames)
 num_frames = num_interpolations * (len(df) - 1)
 anim = animation.FuncAnimation(fig, animate, init_func=init, fargs=(interps_df, param_values, num_interpolations),
-                           frames=num_frames, interval=1, blit=True)
+                           frames=all_frames, interval=1, blit=True)
 
-anim.save('SIRmodel_RecoveryTimeVaried.gif', fps=30, dpi=300)
+anim.save('SIRmodel_RecoveryTimeVaried.gif', fps=fps, dpi=300)
 plt.close()
 # plt.show()
