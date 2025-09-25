@@ -22,7 +22,7 @@ def animate(i, df):
     return line1, line2, line3
     
     
-def calc_interpolations(df):
+def calc_interpolations(df, num_interpolations):
     
     files = list(df.keys())
     interps_df = {}
@@ -30,7 +30,7 @@ def calc_interpolations(df):
         interps_matrix = []
         for i, file in enumerate(files[:-1]):
             next_file = files[i+1]
-            interp = np.array( [ np.linspace(df[file][category][j], df[next_file][category][j], num=200) for j in range(len(df[file][category])) ] )
+            interp = np.array( [ np.linspace(df[file][category][j], df[next_file][category][j], num=num_interpolations) for j in range(len(df[file][category])) ] )
             interps_matrix += list(interp.T)    # TRANSPOSE THE INTERPOLATION SO THAT EACH ROW REPRESENTS THE NEW Y-AXIS INTERPOLATION VALUES OF LENGTH 200 (REPRESENTING THE NUMBER OF DAYS)
 
         interps_matrix = np.array(interps_matrix)
@@ -92,13 +92,14 @@ def get_results_files(batch_file):
 batch_file = 'RUN_SIRmodel_RecoveryTime-varied.bat'
 values = np.linspace(3, 12, num=19)
 files = get_results_files(batch_file)
+num_interpolations = 200
 
 df = {}
 params = []
 for file in files:
     df[file] = df.get(file, {})
     df, params = get_data(file, df, params)
-interps_df = calc_interpolations(df)
+interps_df = calc_interpolations(df, num_interpolations)
 
 N = int(params[0])
 days = int(params[-1])
@@ -111,7 +112,8 @@ line2, = ax.plot([], [], lw=2, color=color_palette[1], label=categories[1])
 line3, = ax.plot([], [], lw=2, color=color_palette[2], label=categories[2])
 lines = [line1, line2, line3]
 
+num_frames = num_interpolations * (len(df) - 1)
 anim = animation.FuncAnimation(fig, animate, init_func=init, fargs=(interps_df,),
-                           frames=3500, interval=5, blit=True)
+                           frames=num_frames, interval=1, blit=True)
 
 plt.show()
