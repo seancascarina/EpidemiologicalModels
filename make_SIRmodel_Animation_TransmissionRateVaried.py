@@ -22,7 +22,7 @@ def animate(i, df, param_values, num_interpolations):
     if i % num_interpolations == 0:
         index = int(i / num_interpolations)
         value = param_values[index]
-        title.set_text(f"Recovery Time: {value} days")
+        title.set_text(f"Transmission Rate: {round(value, 3)}")
     
     return line1, line2, line3, title
     
@@ -94,9 +94,9 @@ def get_results_files(batch_file):
     return files
     
     
-batch_file = 'RUN_SIRmodel_RecoveryTime-varied.bat'
-param_values = list(np.linspace(3, 12, num=19))
-initial_title = f"Recovery Time: {param_values.pop(0)} days"
+batch_file = 'RUN_SIRmodel_TransmissionRate-varied.bat'
+param_values = list(np.linspace(0.05, 0.5, num=19))
+initial_title = f"Transmission Rate: {round(param_values.pop(0), 3)}"
 files = get_results_files(batch_file)
 num_interpolations = 20
 fps = 30
@@ -145,6 +145,6 @@ num_frames = num_interpolations * (len(df) - 1)
 anim = animation.FuncAnimation(fig, animate, init_func=init, fargs=(interps_df, param_values, num_interpolations),
                            frames=all_frames, interval=1, blit=True)
 
-anim.save('SIRmodel_RecoveryTimeVaried.gif', fps=fps, dpi=300)
+anim.save('SIRmodel_TransmissionRateVaried.gif', fps=fps, dpi=300)
 plt.close()
 # plt.show()
