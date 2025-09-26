@@ -1,4 +1,4 @@
-# EpidemiologyModels
+# Epidemiological Models
 A foundational model in epidemiology is the Susceptible-Infected-Recovered model, or **SIR model**, which simulates the spread of an infectious disease through a population. At any given point in the simulation, a population can be divided into the proportion susceptible to the infection (i.e., not immune), the proportion currently infected, and the proportion recovered (also sometimes called "removed" as it can include individuals who recover due to immunity or die from the infection...both groups are "removed" from the susceptible group).
 The SIR model calculates these proportions over time with the help of two additional parameters: 
 1) **β** ("beta", also known as the transmission rate), which represents the rate that each infected individual spreads the infection to other susceptible individuals. Mathematically, it is the average number of susceptible individuals an infected individual transmits the infection to each day. So if each individual infects another every 4 days, β=1/4 or 0.25.
