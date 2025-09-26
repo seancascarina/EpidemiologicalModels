@@ -5,9 +5,13 @@ def main():
 
     
     # CHANGE THESE TO VARY DIFFERENT PARAMETERS====
-    variable = 'RecoveryTime'
-    flag = '-v'
-    values = np.linspace(3, 12, num=19)
+    # variable = 'RecoveryTime'
+    # flag = '-v'
+    # values = np.linspace(3, 12, num=19)
+    
+    variable = 'TransmissionRate'
+    flag = '-b'
+    values = np.linspace(0.05, 1.0, num=20)
     #==============================================
     
     output = open(f'RUN_SIRmodel_{variable}-varied.bat', 'w')
