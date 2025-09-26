@@ -11,7 +11,7 @@ def main():
     
     variable = 'TransmissionRate'
     flag = '-b'
-    values = np.linspace(0.05, 1.0, num=20)
+    values = np.linspace(0.05, 0.5, num=19)
     #==============================================
     
     output = open(f'RUN_SIRmodel_{variable}-varied.bat', 'w')
