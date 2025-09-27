@@ -121,7 +121,7 @@ batch_file = 'RUN_SIRmodel_with_EffectiveReproductionNumber_RecoveryTime-varied.
 param_values = list(np.linspace(3, 12, num=19))
 initial_title = f"Recovery Time: {param_values.pop(0)} days"
 files = get_results_files(batch_file)
-num_interpolations = 5
+num_interpolations = 10
 fps = 30
 
 df = {}
@@ -141,7 +141,7 @@ ax = plt.axes(xlim=(0, days), ylim=(0, N))
 ax2 = ax.twinx()
 ax2.set_ylim(0, max_Rt)
 ax2.tick_params(axis='y', colors=color_palette[-1], which='both')
-ax2.set_ylabel('Effective Reproduction Number', fontname='Arial', fontsize=14, color=color_palette[-1])
+ax2.set_ylabel(r'Effective Reproduction Number ($\it{Rt}$)', fontname='Arial', fontsize=13, color=color_palette[-1])
 
 ax.set_xlabel('Day', fontname='Arial', fontsize=14)
 ax.set_ylabel('Number of Individuals\n(per 1000)', fontname='Arial', fontsize=14)
@@ -154,9 +154,12 @@ for tick in ax.get_yticklabels():
 line1, = ax.plot([], [], lw=2, color=color_palette[0], label=categories[0])
 line2, = ax.plot([], [], lw=2, color=color_palette[1], label=categories[1])
 line3, = ax.plot([], [], lw=2, color=color_palette[2], label=categories[2])
-line4, = ax2.plot([], [], lw=2, color=color_palette[3], label=categories[3])
-lines = [line1, line2, line3]
-ax.legend(loc=3, bbox_to_anchor=(1,1))
+line4, = ax2.plot([], [], lw=2, color=color_palette[3], label=r'$\it{Rt}$')
+
+handles = [line1, line2, line3, line4]
+labels = [h.get_label() for h in handles]
+plt.legend(handles, labels, loc=3, bbox_to_anchor=(1,1))
+
 title = ax.text(0.5, 1.0, initial_title,
                 ha='center', va='bottom', transform=ax.transAxes, animated=True)
 
