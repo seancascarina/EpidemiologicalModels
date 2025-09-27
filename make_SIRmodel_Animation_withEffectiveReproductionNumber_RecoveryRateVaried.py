@@ -21,8 +21,6 @@ def animate(i, df, param_values, num_interpolations):
     
     y = df[categories[3]][i]
     line4.set_data(x, y)
-    
-    ax2.set_ylim(min(y), max(y))
 
     if i % num_interpolations == 0:
         index = int(i / num_interpolations)
@@ -98,13 +96,32 @@ def get_results_files(batch_file):
     h.close()
     
     return files
-
+    
+    
+def get_ReproductionNumber_bounds(files):
+    
+    max_Rt = 0
+    for file in files:
+        h = open(file)
+        header = h.readline()
+        
+        for line in h:
+            day, category, value = line.rstrip().split('\t')
+            if category != 'Effective Reproduction Number':
+                continue
+                
+            value = float(value)
+            if value > max_Rt:
+                max_Rt = value
+                
+    return max_Rt
+    
     
 batch_file = 'RUN_SIRmodel_with_EffectiveReproductionNumber_RecoveryTime-varied.bat'
 param_values = list(np.linspace(3, 12, num=19))
 initial_title = f"Recovery Time: {param_values.pop(0)} days"
 files = get_results_files(batch_file)
-num_interpolations = 20
+num_interpolations = 5
 fps = 30
 
 df = {}
@@ -116,11 +133,16 @@ interps_df = calc_interpolations(df, num_interpolations)
 
 N = int(params[0])
 days = int(params[-1])
+max_Rt = get_ReproductionNumber_bounds(files)
 
 # INITIALIZE THE FIGURE
 fig = plt.figure()
 ax = plt.axes(xlim=(0, days), ylim=(0, N))
 ax2 = ax.twinx()
+ax2.set_ylim(0, max_Rt)
+ax2.tick_params(axis='y', colors=color_palette[-1], which='both')
+ax2.set_ylabel('Effective Reproduction Number', fontname='Arial', fontsize=14, color=color_palette[-1])
+
 ax.set_xlabel('Day', fontname='Arial', fontsize=14)
 ax.set_ylabel('Number of Individuals\n(per 1000)', fontname='Arial', fontsize=14)
 for tick in ax.get_xticklabels():
@@ -134,7 +156,7 @@ line2, = ax.plot([], [], lw=2, color=color_palette[1], label=categories[1])
 line3, = ax.plot([], [], lw=2, color=color_palette[2], label=categories[2])
 line4, = ax2.plot([], [], lw=2, color=color_palette[3], label=categories[3])
 lines = [line1, line2, line3]
-ax.legend(loc=2, bbox_to_anchor=(1,1))
+ax.legend(loc=3, bbox_to_anchor=(1,1))
 title = ax.text(0.5, 1.0, initial_title,
                 ha='center', va='bottom', transform=ax.transAxes, animated=True)
 
