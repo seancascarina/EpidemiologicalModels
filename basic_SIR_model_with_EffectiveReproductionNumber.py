@@ -19,7 +19,7 @@ def main(args):
     Ii = args.infected
     Ri = args.recovered
     Si = N - Ii - Ri
-    
+
     beta = args.beta
     gamma = 1 / args.recovery_time
     n_days = args.days
@@ -31,11 +31,15 @@ def main(args):
     
     yi = Si, Ii, Ri
     sol = solve_ivp(equations, [min(days), max(days)], yi, args=(N, beta, gamma), t_eval=days)
-    labels = ['Susceptible', 'Infected', 'Recovered']
-    df = make_plotting_df(sol.y, labels)
+    labels = ['Susceptible', 'Infected', 'Recovered', 'Effective Reproduction Number']
+    # df = make_plotting_df(sol.y, labels)
     # lineplot(df)
+    solutions = list(sol.y)
+
+    effective_reproduction_numbers = [(beta * (S/N)) / gamma for i, S in enumerate(sol.y[0])]
+    solutions.append( effective_reproduction_numbers )
     
-    for i, vals in enumerate(sol.y):
+    for i, vals in enumerate(solutions):
         label = labels[i]
         for j, val in enumerate(vals):
             output.write('\t'.join([str(x) for x in (j, label, val)]) + '\n')
@@ -69,7 +73,7 @@ def equations(n_days, y, N, beta, gamma):
     dSdt = -(beta * S * I) / N
     dIdt = (beta * S * I) / N - (gamma * I)
     dRdt = gamma * I
-    
+
     return dSdt, dIdt, dRdt
     
 
