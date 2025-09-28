@@ -150,8 +150,12 @@ for tick in ax.get_yticklabels():
 line1, = ax.plot([], [], lw=2, color=color_palette[0], label=categories[0])
 line2, = ax.plot([], [], lw=2, color=color_palette[1], label=categories[1])
 line3, = ax.plot([], [], lw=2, color=color_palette[2], label=categories[2])
-lines = [line1, line2, line3]
-ax.legend(loc=2, bbox_to_anchor=(1,1))
+line4, = ax2.plot([], [], lw=2, color=color_palette[3], label=r'$\it{Rt}$')
+
+handles = [line1, line2, line3, line4]
+labels = [h.get_label() for h in handles]
+plt.legend(handles, labels, loc=3, bbox_to_anchor=(1,1))
+
 title = ax.text(0.5, 1.0, initial_title,
                 ha='center', va='bottom', transform=ax.transAxes, animated=True)
 
