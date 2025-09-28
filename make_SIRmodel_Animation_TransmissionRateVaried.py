@@ -94,6 +94,25 @@ def get_results_files(batch_file):
     return files
     
     
+def get_ReproductionNumber_bounds(files):
+    
+    max_Rt = 0
+    for file in files:
+        h = open(file)
+        header = h.readline()
+        
+        for line in h:
+            day, category, value = line.rstrip().split('\t')
+            if category != 'Effective Reproduction Number':
+                continue
+                
+            value = float(value)
+            if value > max_Rt:
+                max_Rt = value
+                
+    return max_Rt
+    
+    
 batch_file = 'RUN_SIRmodel_TransmissionRate-varied.bat'
 param_values = list(np.linspace(0.05, 0.5, num=19))
 initial_title = f"Transmission Rate: {round(param_values.pop(0), 3)}"
