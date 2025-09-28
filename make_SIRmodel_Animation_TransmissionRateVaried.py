@@ -129,10 +129,16 @@ interps_df = calc_interpolations(df, num_interpolations)
 
 N = int(params[0])
 days = int(params[-1])
+max_Rt = get_ReproductionNumber_bounds(files)
 
 # INITIALIZE THE FIGURE
 fig = plt.figure()
 ax = plt.axes(xlim=(0, days), ylim=(0, N))
+ax2 = ax.twinx()
+ax2.set_ylim(0, max_Rt)
+ax2.tick_params(axis='y', colors=color_palette[-1], which='both')
+ax2.set_ylabel(r'Effective Reproduction Number ($\it{Rt}$)', fontname='Arial', fontsize=13, color=color_palette[-1])
+
 ax.set_xlabel('Day', fontname='Arial', fontsize=14)
 ax.set_ylabel('Number of Individuals\n(per 1000)', fontname='Arial', fontsize=14)
 for tick in ax.get_xticklabels():
