@@ -3,7 +3,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib import animation
 import seaborn as sns
-categories = ['Susceptible', 'Infected', 'Recovered']
+categories = ['Susceptible', 'Infected', 'Recovered', 'Effective Reproduction Number']
 color_palette = sns.color_palette()[:len(categories)]
 
 
@@ -18,6 +18,9 @@ def animate(i, df, param_values, num_interpolations):
     
     y = df[categories[2]][i]
     line3.set_data(x, y)
+    
+    y = df[categories[3]][i]
+    line4.set_data(x, y)
 
     if i % num_interpolations == 0:
         index = int(i / num_interpolations)
@@ -51,8 +54,9 @@ def init():
     line1.set_data([], [])
     line2.set_data([], [])
     line3.set_data([], [])
+    line4.set_data([], [])
 
-    return line1, line2, line3
+    return line1, line2, line3, line4
     
 
 def get_data(file, df, params):
@@ -113,7 +117,7 @@ def get_ReproductionNumber_bounds(files):
     return max_Rt
     
     
-batch_file = 'RUN_SIRmodel_TransmissionRate-varied.bat'
+batch_file = 'RUN_SIRmodel_with_EffectiveReproductionNumber_TransmissionRate-varied.bat'
 param_values = list(np.linspace(0.05, 0.5, num=19))
 initial_title = f"Transmission Rate: {round(param_values.pop(0), 3)}"
 files = get_results_files(batch_file)
