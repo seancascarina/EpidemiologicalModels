@@ -2,7 +2,8 @@
 import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
-color_palette = sns.color_palette()
+categories = ['Susceptible', 'Infected', 'Recovered', 'Effective Reproduction Number']
+color_palette = sns.color_palette()[:len(categories)]
 
 def main(args):
 
@@ -20,12 +21,26 @@ def lineplot(df, file):
     ax = sns.lineplot(x='Day', y='Number of Individuals', data=df, hue='Category')
     ax2 = ax.twinx()
     ax2.plot([x for x in range(len(Rt_vals))], Rt_vals, lw=2, color=color_palette[3], label=r'$\it{Rt}$')
-    ax2.set_ylim(0, max(Rt_vals)+0.2)
+    ax2.set_ylim(0, max(Rt_vals)+0.5)
+    ax2.tick_params(axis='y', colors=color_palette[3], which='both')
+    ax2.set_ylabel(r'Effective Reproduction Number ($\it{Rt}$)', fontname='Arial', fontsize=13, color=color_palette[-1])
+
+    ax.legend().remove()
+    ax2.legend().remove()
+    line1, = ax.plot([], [], lw=2, color=color_palette[0], label=categories[0])
+    line2, = ax.plot([], [], lw=2, color=color_palette[1], label=categories[1])
+    line3, = ax.plot([], [], lw=2, color=color_palette[2], label=categories[2])
+    line4, = ax2.plot([], [], lw=2, color=color_palette[3], label=r'$\it{Rt}$')
+
+    handles = [line1, line2, line3, line4]
+    labels = [h.get_label() for h in handles]
+    plt.legend(handles, labels, loc='upper right')
+
     plt.xticks(fontname='Arial', fontsize=12)
     plt.yticks(fontname='Arial', fontsize=12)
     plt.xlabel('Day', fontname='Arial', fontsize=14)
-    plt.ylabel('Number of Individuals\n(per 1000)', fontname='Arial', fontsize=14)
-    plt.legend(loc=2, bbox_to_anchor=(1,1))
+    ax.set_ylabel('Number of Individuals\n(per 1000)', fontname='Arial', fontsize=14)
+    # plt.legend(loc=2, bbox_to_anchor=(1,1))
     plt.savefig(file.replace('_Results.tsv', 'with_Rt_Lineplot.png'), bbox_inches='tight', dpi=600)
     plt.close()
     
@@ -46,10 +61,7 @@ def get_data(file):
         df['Day'].append( int(day) )
         df['Number of Individuals'].append( float(value) )
         df['Category'].append( category )
-        
-        # df[file][category] = df[file].get(category, [])
-        # df[file][category].append(float(value))
-        
+
     h.close()
     
     return df, params
