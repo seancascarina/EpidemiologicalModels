@@ -2,9 +2,9 @@
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-def main():
+def main(args):
 
-    file = 'SIRmodel_5.5-RecoveryTime_Results.tsv'
+    file = args.data_file
     df, params = get_data(file)
     lineplot(df, file)
     
@@ -54,5 +54,18 @@ def parse_params_header(params_header):
     return params
     
 
+def get_args(arguments):
+    
+    parser = argparse.ArgumentParser(description='Plot epidemiological model results.', prog='plot_SIRmodel_data')
+    
+    parser.add_argument('data_file', type=str, help="""Results file from an epidemiological model simulation.""")
+
+    args = parser.parse_args(arguments)
+    
+    return args
+    
+    
 if __name__ == '__main__':
-    main()
+    import sys, argparse
+    args = get_args(sys.argv[1:])
+    main(args)
