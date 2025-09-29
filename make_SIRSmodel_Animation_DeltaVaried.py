@@ -25,7 +25,7 @@ def animate(i, df, param_values, num_interpolations):
     if i % num_interpolations == 0:
         index = int(i / num_interpolations)
         value = param_values[index]
-        title.set_text(f"Transmission Rate: {round(value, 3)}")
+        title.set_text(f"Delta: {round(value, 5)}")
     
     return line1, line2, line3, title
     
@@ -117,9 +117,9 @@ def get_ReproductionNumber_bounds(files):
     return max_Rt
     
     
-batch_file = 'RUN_SIRmodel_with_EffectiveReproductionNumber_TransmissionRate-varied.bat'
-param_values = list(np.linspace(0.05, 0.5, num=19))
-initial_title = f"Transmission Rate: {round(param_values.pop(0), 3)}"
+batch_file = 'RUN_SIRSmodel_with_EffectiveReproductionNumber_Delta-varied.bat'
+param_values = list(np.linspace(0.005, 0.05, num=19))
+initial_title = f"Delta: {round(param_values.pop(0), 5)}"
 files = get_results_files(batch_file)
 num_interpolations = 20
 fps = 30
@@ -139,7 +139,7 @@ max_Rt = get_ReproductionNumber_bounds(files)
 fig = plt.figure()
 ax = plt.axes(xlim=(0, days), ylim=(0, N))
 ax2 = ax.twinx()
-ax2.set_ylim(0, max_Rt)
+ax2.set_ylim(0, max_Rt+0.5)
 ax2.tick_params(axis='y', colors=color_palette[-1], which='both')
 ax2.set_ylabel(r'Effective Reproduction Number ($\it{Rt}$)', fontname='Arial', fontsize=13, color=color_palette[-1])
 
@@ -178,6 +178,6 @@ num_frames = num_interpolations * (len(df) - 1)
 anim = animation.FuncAnimation(fig, animate, init_func=init, fargs=(interps_df, param_values, num_interpolations),
                            frames=all_frames, interval=1, blit=True)
 
-anim.save('SIRmodel_TransmissionRateVaried.gif', fps=fps, dpi=300)
+anim.save('SIRSmodel_DeltaVaried.gif', fps=fps, dpi=300)
 plt.close()
 # plt.show()
