@@ -27,7 +27,7 @@ def main(args):
     days = np.linspace(0, n_days, n_days) 
     
     output = open(args.output_file, 'w')
-    output.write(f'PARAMETERS: population_size={N} infected={Ii} recovered={Ri} beta={beta} gamma={gamma} days={n_days}\n')
+    output.write(f'PARAMETERS: population_size={N} infected={Ii} recovered={Ri} beta={beta} gamma={gamma} delta={delta} days={n_days}\n')
     output.write('\t'.join(['Day', 'Category', 'Value (Number of People)']) + '\n')
     
     yi = Si, Ii, Ri
