@@ -9,13 +9,15 @@ def main(args):
     N = args.population_size
     Ii = args.infected
     Ri = args.recovered
-    Di = 0
-    Si = N - Ii - Ri
+    Di = 0  # MIGHT WANT TO MAKE THESE COMMAND-LINE ARGUMENTS
+    Vi = 0  # MIGHT WANT TO MAKE THESE COMMAND-LINE ARGUMENTS
+    Si = N - Ii - Ri    # MIGHT WANT TO INCORPORATE NEW VARIABLES INTO THIS CALCULATION
     
     beta = args.beta
     gamma = 1 / args.recovery_time
     delta = args.delta
     mortality_rate = args.mortality_rate
+    vaccination_rate = args.vaccination_rate
     n_days = args.days
     days = np.linspace(0, n_days, n_days) 
     
@@ -47,6 +49,10 @@ def main(args):
         yi = Si, Ii, Ri, Di
         labels = ['Susceptible', 'Infected', 'Recovered', 'Deceased', 'Effective Reproduction Number']
         sol = solve_ivp(equations_SIRD, [min(days), max(days)], yi, args=(N, beta, gamma, mortality_rate), t_eval=days)
+    elif model_type == 'SIRV':
+        yi = Si, Ii, Ri, Vi
+        labels = ['Susceptible', 'Infected', 'Recovered', 'Vaccinated', 'Effective Reproduction Number']
+        sol = solve_ivp(equations_SIRV, [min(days), max(days)], yi, args=(N, beta, gamma, vaccination_rate), t_eval=days)
         
     # labels = ['Susceptible', 'Infected', 'Recovered', 'Effective Reproduction Number']
 
@@ -102,6 +108,19 @@ def equations_SIRD(n_days, y, N, beta, gamma, mortality_rate):
 
     return dSdt, dIdt, dRdt, dDdt
     
+    
+def equations_SIRV(n_days, y, N, beta, gamma, vaccination_rate):
+    
+    S, I, R, V = y
+    # dSdt = -(beta * S * I) / N - (vaccination_rate * S) + (delta * V)     # COULD MODEL THIS WITH SOME RATE OF IMMUNITY LOSS, EITHER USING delta OR A SEPARATE RATE OF IMMUNITY LOSS IF IMMUNITY IS LOST AT A DIFFERENT RATE COMPARED TO IMMUNITY LOSS IN RECOVERED INDIVIDUALS
+    dSdt = -(beta * S * I) / N - (vaccination_rate * S)
+    dIdt = (beta * S * I) / N - (gamma * I)
+    dRdt = gamma * I
+    # dVdt = (vaccination_rate * S) - (delta * V)     # COULD MODEL THIS WITH SOME RATE OF IMMUNITY LOSS, EITHER USING delta OR A SEPARATE RATE OF IMMUNITY LOSS IF IMMUNITY IS LOST AT A DIFFERENT RATE COMPARED TO IMMUNITY LOSS IN RECOVERED INDIVIDUALS
+    dVdt = vaccination_rate * S
+
+    return dSdt, dIdt, dRdt, dVdt
+    
 
 def get_args(arguments):
     
@@ -115,6 +134,7 @@ def get_args(arguments):
     parser.add_argument('-d', '--days', type=int, default=365, help="""Number of days to run the simulation for.""")
     parser.add_argument('-l', '--delta', type=float, default=0.05, help="""Rate of immunity loss.""")
     parser.add_argument('-m', '--mortality_rate', type=float, default=0.005, help="""Rate of mortality (death) from the pathogen.""")
+    parser.add_argument('-x', '--vaccination_rate', type=float, default=0.01, help="""Rate of vaccination.""")
     parser.add_argument('-t', '--type_of_model', type=str, default='SIR', help="""Type of compartment model to use. Must be one of the following: SIR, SIRS, SIS.""")
     parser.add_argument('-o', '--output_file', type=str, default=None, help="""Output file to write compartment model results to.""")
 
