@@ -9,11 +9,13 @@ def main(args):
     N = args.population_size
     Ii = args.infected
     Ri = args.recovered
+    Di = 0
     Si = N - Ii - Ri
     
     beta = args.beta
     gamma = 1 / args.recovery_time
     delta = args.delta
+    mortality_rate = args.mortality_rate
     n_days = args.days
     days = np.linspace(0, n_days, n_days) 
     
@@ -41,6 +43,10 @@ def main(args):
         yi = Si, Ii
         labels = ['Susceptible', 'Infected', 'Effective Reproduction Number']
         sol = solve_ivp(equations_SIS, [min(days), max(days)], yi, args=(N, beta, gamma), t_eval=days)
+    elif model_type == 'SIRD':
+        yi = Si, Ii, Ri, Di
+        labels = ['Susceptible', 'Infected', 'Recovered', 'Deceased', 'Effective Reproduction Number']
+        sol = solve_ivp(equations_SIRD, [min(days), max(days)], yi, args=(N, beta, gamma, mortality_rate), t_eval=days)
         
     # labels = ['Susceptible', 'Infected', 'Recovered', 'Effective Reproduction Number']
 
@@ -85,6 +91,17 @@ def equations_SIS(n_days, y, N, beta, gamma):
 
     return dSdt, dIdt
     
+    
+def equations_SIRD(n_days, y, N, beta, gamma, mortality_rate):
+    
+    S, I, R, D = y
+    dSdt = -(beta * S * I) / N
+    dIdt = (beta * S * I) / N - (gamma * I) - (mortality_rate * I)
+    dRdt = gamma * I
+    dDdt = mortality_rate * I
+
+    return dSdt, dIdt, dRdt, dDdt
+    
 
 def get_args(arguments):
     
@@ -97,6 +114,7 @@ def get_args(arguments):
     parser.add_argument('-v', '--recovery_time', type=float, default=10, help="""Recovery time in days. This is used to calculate gamma (inverse of recovery time).""")
     parser.add_argument('-d', '--days', type=int, default=365, help="""Number of days to run the simulation for.""")
     parser.add_argument('-l', '--delta', type=float, default=0.05, help="""Rate of immunity loss.""")
+    parser.add_argument('-m', '--mortality_rate', type=float, default=0.005, help="""Rate of mortality (death) from the pathogen.""")
     parser.add_argument('-t', '--type_of_model', type=str, default='SIR', help="""Type of compartment model to use. Must be one of the following: SIR, SIRS, SIS.""")
     parser.add_argument('-o', '--output_file', type=str, default=None, help="""Output file to write compartment model results to.""")
 
