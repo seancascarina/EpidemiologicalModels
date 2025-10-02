@@ -17,7 +17,15 @@ def main(args):
     n_days = args.days
     days = np.linspace(0, n_days, n_days) 
     
-    output = open(args.output_file, 'w')
+    model_type = args.type_of_model
+    output_file = args.output_file
+    if not output_file:
+        output_file = model_type + '_Model_Results.tsv'
+    else:
+        if '.' not in output_file:
+            output_file += '.tsv'
+        
+    output = open(output_file, 'w')
     output.write(f'PARAMETERS: population_size={N} infected={Ii} recovered={Ri} beta={beta} gamma={gamma} delta={delta} days={n_days}\n')
     output.write('\t'.join(['Day', 'Category', 'Value (Number of People)']) + '\n')
     
@@ -50,7 +58,7 @@ def equations(n_days, y, N, beta, gamma, delta):
 
 def get_args(arguments):
     
-    parser = argparse.ArgumentParser(description='Run SIR model simulation.', prog='SIR')
+    parser = argparse.ArgumentParser(description='Run compartment model simulation.', prog='CompartmentModel')
     
     parser.add_argument('-p', '--population_size', type=int, default=1000, help="""Population size in number of individuals ("N" in many epidemiological models).""")
     parser.add_argument('-i', '--infected', type=int, default=1, help="""Number of infected individuals at the start of the simulation.""")
@@ -59,7 +67,8 @@ def get_args(arguments):
     parser.add_argument('-v', '--recovery_time', type=float, default=10, help="""Recovery time in days. This is used to calculate gamma (inverse of recovery time).""")
     parser.add_argument('-d', '--days', type=int, default=365, help="""Number of days to run the simulation for.""")
     parser.add_argument('-l', '--delta', type=float, default=0.05, help="""Rate of immunity loss.""")
-    parser.add_argument('-o', '--output_file', type=str, default='SIRSmodel_Results.tsv', help="""Output file to write SIR model results to.""")
+    parser.add_argument('-t', '--type_of_model', type=str, default='SIR', help="""Type of compartment model to use. Must be one of the following: SIR, SIRS, SIS.""")
+    parser.add_argument('-o', '--output_file', type=str, default=None, help="""Output file to write compartment model results to.""")
 
     args = parser.parse_args(arguments)
     
