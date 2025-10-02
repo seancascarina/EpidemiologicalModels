@@ -6,15 +6,6 @@ from scipy.integrate import solve_ivp
 
 def main(args):
 
-    # N = 10000   # POPULATION SIZE
-    # Ii = 1       # INITIAL NUMBER OF INFECTED PEOPLE
-    # Ri = 0       # INITIAL NUMBER OF RECOVERED PEOPLE
-    # Si = N - Ii - Ri   # INITIAL NUMBER OF SUSCEPTIBLE PEOPLE
-    
-    # beta = 0.2  # RATE OF TRANSMISSION (NUMBER OF PEOPLE INFECTED PER DAY FOR EACH INFECTED PERSON)
-    # gamma = 1/10    # RATE OF RECOVERY (INVERSE OF AVERAGE NUMBER OF DAYS FROM INFECTION ONSET TO RECOVERY)
-    # n_days = np.linspace(0, 365, num=365)  # NUMBER OF DAYS TO RUN THE SIMULATION FOR
-    
     N = args.population_size
     Ii = args.infected
     Ri = args.recovered
@@ -33,8 +24,7 @@ def main(args):
     yi = Si, Ii, Ri
     sol = solve_ivp(equations, [min(days), max(days)], yi, args=(N, beta, gamma, delta), t_eval=days)
     labels = ['Susceptible', 'Infected', 'Recovered', 'Effective Reproduction Number']
-    # df = make_plotting_df(sol.y, labels)
-    # lineplot(df)
+
     solutions = list(sol.y)
 
     effective_reproduction_numbers = [(beta * (S/N)) / gamma for i, S in enumerate(sol.y[0])]
@@ -46,12 +36,6 @@ def main(args):
             output.write('\t'.join([str(x) for x in (j, label, val)]) + '\n')
             
     output.close()
-    
-    
-def lineplot(df):
-    
-    sns.lineplot(x='Day', y='Number of People', data=df, hue='Category')
-    plt.show()
 
 
 def make_plotting_df(vals_list, labels):
