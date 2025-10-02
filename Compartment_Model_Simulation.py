@@ -30,7 +30,12 @@ def main(args):
     output.write('\t'.join(['Day', 'Category', 'Value (Number of People)']) + '\n')
     
     yi = Si, Ii, Ri
-    sol = solve_ivp(equations, [min(days), max(days)], yi, args=(N, beta, gamma, delta), t_eval=days)
+    
+    if model_type == 'SIR':
+        sol = solve_ivp(equations_SIR, [min(days), max(days)], yi, args=(N, beta, gamma), t_eval=days)
+    elif model_type == 'SIRS':
+        sol = solve_ivp(equations_SIRS, [min(days), max(days)], yi, args=(N, beta, gamma, delta), t_eval=days)
+        
     labels = ['Susceptible', 'Infected', 'Recovered', 'Effective Reproduction Number']
 
     solutions = list(sol.y)
@@ -45,8 +50,18 @@ def main(args):
             
     output.close()
     
+    
+def equations_SIR(n_days, y, N, beta, gamma):
+    
+    S, I, R = y
+    dSdt = -(beta * S * I) / N
+    dIdt = (beta * S * I) / N - (gamma * I)
+    dRdt = gamma * I
 
-def equations(n_days, y, N, beta, gamma, delta):
+    return dSdt, dIdt, dRdt
+    
+
+def equations_SIRS(n_days, y, N, beta, gamma, delta):
     
     S, I, R = y
     dSdt = -(beta * S * I) / N + (delta * R)
