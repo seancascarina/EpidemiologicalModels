@@ -36,20 +36,6 @@ def main(args):
             output.write('\t'.join([str(x) for x in (j, label, val)]) + '\n')
             
     output.close()
-
-
-def make_plotting_df(vals_list, labels):
-    
-    df = {'Number of People':[],
-        'Day':[],
-        'Category':[]}
-    for i, vals in enumerate(vals_list):
-        label = labels[i]
-        df['Number of People'] += list(vals)
-        df['Day'] += [x for x in range(len(vals))]
-        df['Category'] += [label]*len(vals)
-        
-    return df
     
 
 def equations(n_days, y, N, beta, gamma, delta):
