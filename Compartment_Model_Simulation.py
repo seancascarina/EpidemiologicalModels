@@ -43,6 +43,10 @@ def main(args):
         yi = Si, Ii, Ri
         labels = ['Susceptible', 'Infected', 'Recovered', 'Effective Reproduction Number']
         sol = solve_ivp(equations_SIRS, [min(days), max(days)], yi, args=(N, beta, gamma, delta), t_eval=days)
+    elif model_type == 'SI':
+        yi = Si, Ii
+        labels = ['Susceptible', 'Infected', 'Effective Reproduction Number']
+        sol = solve_ivp(equations_SI, [min(days), max(days)], yi, args=(N, beta), t_eval=days)
     elif model_type == 'SIS':
         yi = Si, Ii
         labels = ['Susceptible', 'Infected', 'Effective Reproduction Number']
@@ -97,6 +101,15 @@ def equations_SIRS(n_days, y, N, beta, gamma, delta):
     dRdt = (gamma * I) - (delta * R)
     
     return dSdt, dIdt, dRdt
+    
+    
+def equations_SI(n_days, y, N, beta):
+    
+    S, I = y
+    dSdt = -(beta * S * I) / N
+    dIdt = (beta * S * I) / N
+
+    return dSdt, dIdt
     
     
 def equations_SIS(n_days, y, N, beta, gamma):
