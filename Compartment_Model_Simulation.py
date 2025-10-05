@@ -18,6 +18,7 @@ def main(args):
     delta = args.delta
     mortality_rate = args.mortality_rate
     vaccination_rate = args.vaccination_rate
+    latency = args.latency
     n_days = args.days
     days = np.linspace(0, n_days, n_days) 
     
@@ -146,6 +147,7 @@ def get_args(arguments):
     parser.add_argument('-l', '--delta', type=float, default=0.05, help="""Rate of immunity loss.""")
     parser.add_argument('-m', '--mortality_rate', type=float, default=0.005, help="""Rate of mortality (death) from the pathogen.""")
     parser.add_argument('-x', '--vaccination_rate', type=float, default=0.01, help="""Rate of vaccination.""")
+    parser.add_argument('-w', '--latency', type=float, default=0.2, help="""Latency between exposure and infectious (i.e., the rate at which an individual passes from "Exposed" to "Infectious" in a SEIR-type model).""")
     parser.add_argument('-t', '--type_of_model', type=str, default='SIR', help="""Type of compartment model to use. Must be one of the following: SIR, SIRS, SIS.""")
     parser.add_argument('-o', '--output_file', type=str, default=None, help="""Output file to write compartment model results to.""")
 
