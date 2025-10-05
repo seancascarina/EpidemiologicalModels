@@ -59,6 +59,10 @@ def main(args):
         yi = Si, Ii, Ri, Vi
         labels = ['Susceptible', 'Infected', 'Recovered', 'Vaccinated', 'Effective Reproduction Number']
         sol = solve_ivp(equations_SIRV, [min(days), max(days)], yi, args=(N, beta, gamma, vaccination_rate), t_eval=days)
+    elif model_type == 'SEIS':
+        yi = Si, Ei, Ii
+        labels = ['Susceptible', 'Exposed', 'Infected', 'Effective Reproduction Number']
+        sol = solve_ivp(equations_SEIS, [min(days), max(days)], yi, args=(N, beta, gamma, latency), t_eval=days)
     elif model_type == 'SEIR':
         yi = Si, Ei, Ii, Ri
         labels = ['Susceptible', 'Exposed', 'Infected', 'Recovered', 'Effective Reproduction Number']
@@ -143,6 +147,16 @@ def equations_SIRV(n_days, y, N, beta, gamma, vaccination_rate):
     dVdt = vaccination_rate * S
 
     return dSdt, dIdt, dRdt, dVdt
+    
+    
+def equations_SEIS(n_days, y, N, beta, gamma, latency):
+    
+    S, E, I = y
+    dSdt = -(beta * S * I) / N + (gamma * I)
+    dEdt = (beta * S * I) / N - (latency * E)
+    dIdt = (latency * E) - (gamma * I)
+
+    return dSdt, dEdt, dIdt
     
     
 def equations_SEIR(n_days, y, N, beta, gamma, latency):
