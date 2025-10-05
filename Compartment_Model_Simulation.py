@@ -11,6 +11,7 @@ def main(args):
     Ri = args.recovered
     Di = 0  # MIGHT WANT TO MAKE THESE COMMAND-LINE ARGUMENTS
     Vi = 0  # MIGHT WANT TO MAKE THESE COMMAND-LINE ARGUMENTS
+    Ei = 0  # MIGHT WANT TO MAKE THESE COMMAND-LINE ARGUMENTS
     Si = N - Ii - Ri    # MIGHT WANT TO INCORPORATE NEW VARIABLES INTO THIS CALCULATION
     
     beta = args.beta
@@ -54,7 +55,11 @@ def main(args):
         yi = Si, Ii, Ri, Vi
         labels = ['Susceptible', 'Infected', 'Recovered', 'Vaccinated', 'Effective Reproduction Number']
         sol = solve_ivp(equations_SIRV, [min(days), max(days)], yi, args=(N, beta, gamma, vaccination_rate), t_eval=days)
-        
+    elif model_type == 'SEIR':
+        yi = Si, Ei, Ii, Ri
+        labels = ['Susceptible', 'Exposed', 'Infected', 'Recovered', 'Effective Reproduction Number']
+        sol = solve_ivp(equations_SEIR, [min(days), max(days)], yi, args=(N, beta, gamma, latency), t_eval=days)
+    
     # labels = ['Susceptible', 'Infected', 'Recovered', 'Effective Reproduction Number']
 
     solutions = list(sol.y)
