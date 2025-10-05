@@ -121,6 +121,17 @@ def equations_SIRV(n_days, y, N, beta, gamma, vaccination_rate):
 
     return dSdt, dIdt, dRdt, dVdt
     
+    
+def equations_SEIR(n_days, y, N, beta, gamma, latency):
+    
+    S, E, I, R = y
+    dSdt = -(beta * S * I) / N
+    dEdt = (beta * S * I) / N - (latency * E)
+    dIdt = (latency * E) - (gamma * I)
+    dRdt = gamma * I
+
+    return dSdt, dEdt, dIdt, dRdt
+    
 
 def get_args(arguments):
     
