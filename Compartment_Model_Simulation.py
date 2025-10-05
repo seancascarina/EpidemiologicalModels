@@ -59,6 +59,10 @@ def main(args):
         yi = Si, Ei, Ii, Ri
         labels = ['Susceptible', 'Exposed', 'Infected', 'Recovered', 'Effective Reproduction Number']
         sol = solve_ivp(equations_SEIR, [min(days), max(days)], yi, args=(N, beta, gamma, latency), t_eval=days)
+    elif model_type == 'SEIRS':
+        yi = Si, Ei, Ii, Ri
+        labels = ['Susceptible', 'Exposed', 'Infected', 'Recovered', 'Effective Reproduction Number']
+        sol = solve_ivp(equations_SEIRS, [min(days), max(days)], yi, args=(N, beta, gamma, delta, latency), t_eval=days)
     
     # labels = ['Susceptible', 'Infected', 'Recovered', 'Effective Reproduction Number']
 
@@ -135,6 +139,17 @@ def equations_SEIR(n_days, y, N, beta, gamma, latency):
     dEdt = (beta * S * I) / N - (latency * E)
     dIdt = (latency * E) - (gamma * I)
     dRdt = gamma * I
+
+    return dSdt, dEdt, dIdt, dRdt
+    
+    
+def equations_SEIRS(n_days, y, N, beta, gamma, delta, latency):
+    
+    S, E, I, R = y
+    dSdt = -(beta * S * I) / N + (delta * R)
+    dEdt = (beta * S * I) / N - (latency * E)
+    dIdt = (latency * E) - (gamma * I)
+    dRdt = (gamma * I) - (delta * R)
 
     return dSdt, dEdt, dIdt, dRdt
     
