@@ -32,42 +32,52 @@ def main(args):
             output_file += '.tsv'
         
     output = open(output_file, 'w')
-    output.write(f'PARAMETERS: population_size={N} infected={Ii} recovered={Ri} beta={beta} gamma={gamma} delta={delta} days={n_days}\n')
+    #output.write(f'PARAMETERS: model_type={model_type} population_size={N} infected={Ii} recovered={Ri} beta={beta} gamma={gamma} delta={delta} days={n_days} mortality_rate={mortality_rate} vaccination_rate={vaccination_rate} latency={latency}\n')
+    # output.write(f'PARAMETERS: population_size={N} infected={Ii} recovered={Ri} beta={beta} gamma={gamma} delta={delta} days={n_days}\n')
     output.write('\t'.join(['Day', 'Category', 'Value (Number of People)']) + '\n')
     
     if model_type == 'SIR':
+        output.write(f'PARAMETERS: population_size={N} infected={Ii} recovered={Ri} beta={beta} gamma={gamma} days={n_days}\n')
         yi = Si, Ii, Ri
         labels = ['Susceptible', 'Infected', 'Recovered', 'Effective Reproduction Number']
         sol = solve_ivp(equations_SIR, [min(days), max(days)], yi, args=(N, beta, gamma), t_eval=days)
     elif model_type == 'SIRS':
+        output.write(f'PARAMETERS: model_type={model_type} population_size={N} infected={Ii} recovered={Ri} beta={beta} gamma={gamma} delta={delta} days={n_days}\n')
         yi = Si, Ii, Ri
         labels = ['Susceptible', 'Infected', 'Recovered', 'Effective Reproduction Number']
         sol = solve_ivp(equations_SIRS, [min(days), max(days)], yi, args=(N, beta, gamma, delta), t_eval=days)
     elif model_type == 'SI':
+        output.write(f'PARAMETERS: model_type={model_type} population_size={N} infected={Ii} recovered={Ri} beta={beta} days={n_days}\n')
         yi = Si, Ii
         labels = ['Susceptible', 'Infected', 'Effective Reproduction Number']
         sol = solve_ivp(equations_SI, [min(days), max(days)], yi, args=(N, beta), t_eval=days)
     elif model_type == 'SIS':
+        output.write(f'PARAMETERS: model_type={model_type} population_size={N} infected={Ii} recovered={Ri} beta={beta} days={n_days}\n')
         yi = Si, Ii
         labels = ['Susceptible', 'Infected', 'Effective Reproduction Number']
         sol = solve_ivp(equations_SIS, [min(days), max(days)], yi, args=(N, beta, gamma), t_eval=days)
     elif model_type == 'SIRD':
+        output.write(f'PARAMETERS: model_type={model_type} population_size={N} infected={Ii} recovered={Ri} beta={beta} gamma={gamma} mortality_rate={mortality_rate} days={n_days}\n')
         yi = Si, Ii, Ri, Di
         labels = ['Susceptible', 'Infected', 'Recovered', 'Deceased', 'Effective Reproduction Number']
         sol = solve_ivp(equations_SIRD, [min(days), max(days)], yi, args=(N, beta, gamma, mortality_rate), t_eval=days)
     elif model_type == 'SIRV':
+        output.write(f'PARAMETERS: model_type={model_type} population_size={N} infected={Ii} recovered={Ri} beta={beta} gamma={gamma} vaccination_rate={vaccination_rate} days={n_days}\n')
         yi = Si, Ii, Ri, Vi
         labels = ['Susceptible', 'Infected', 'Recovered', 'Vaccinated', 'Effective Reproduction Number']
         sol = solve_ivp(equations_SIRV, [min(days), max(days)], yi, args=(N, beta, gamma, vaccination_rate), t_eval=days)
     elif model_type == 'SEIS':
+        output.write(f'PARAMETERS: model_type={model_type} population_size={N} infected={Ii} recovered={Ri} beta={beta} gamma={gamma} latency={latency} days={n_days}\n')
         yi = Si, Ei, Ii
         labels = ['Susceptible', 'Exposed', 'Infected', 'Effective Reproduction Number']
         sol = solve_ivp(equations_SEIS, [min(days), max(days)], yi, args=(N, beta, gamma, latency), t_eval=days)
     elif model_type == 'SEIR':
+        output.write(f'PARAMETERS: model_type={model_type} population_size={N} infected={Ii} recovered={Ri} beta={beta} gamma={gamma} latency={latency} days={n_days}\n')
         yi = Si, Ei, Ii, Ri
         labels = ['Susceptible', 'Exposed', 'Infected', 'Recovered', 'Effective Reproduction Number']
         sol = solve_ivp(equations_SEIR, [min(days), max(days)], yi, args=(N, beta, gamma, latency), t_eval=days)
     elif model_type == 'SEIRS':
+        output.write(f'PARAMETERS: model_type={model_type} population_size={N} infected={Ii} recovered={Ri} beta={beta} gamma={gamma} delta={delta} latency={latency} days={n_days}\n')
         yi = Si, Ei, Ii, Ri
         labels = ['Susceptible', 'Exposed', 'Infected', 'Recovered', 'Effective Reproduction Number']
         sol = solve_ivp(equations_SEIRS, [min(days), max(days)], yi, args=(N, beta, gamma, delta, latency), t_eval=days)
